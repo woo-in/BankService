@@ -2,13 +2,45 @@ package config;
 
 
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration; 
+import org.springframework.context.annotation.Configuration;
 
+import dao.BankAccountDao;
+import org.apache.tomcat.jdbc.pool.DataSource;
 
 @Configuration 
 @ComponentScan(basePackages= {"service" , "UI" , "account" , "dao"})
-public class AppCtx{ }
+public class AppCtx{ 
+	
+	
+	
+	// dataSource 빈 등록 
+	@Bean(destroyMethod = "close")
+	public DataSource dataSource() {
+		
+		DataSource ds = new DataSource();
+		ds.setDriverClassName("org.mariadb.jdbc.Driver");
+		ds.setUrl("jdbc:mariadb://localhost:3306/BankSystem");
+		ds.setUsername("root"); 
+		ds.setPassword("0205"); 
+		
+		// 10 개로 시작 , 최대 활성 갯수는 10000 
+		ds.setInitialSize(10); 
+		ds.setMaxActive(10000); 
+	
+		return ds; 
+	}
+	
+	// 
+	@Bean 
+	public BankAccountDao bankAccountDao() {
+		return new BankAccountDao(dataSource()); 
+	}
+	
+	
+	
+}
 
 
 

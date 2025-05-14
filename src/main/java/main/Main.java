@@ -9,7 +9,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import UI.ConsoleUI;
 import config.AppCtx;
 
-// 계좌 생성시 import 
+// // 계좌 생성시 import 
 //import java.util.Random;
 //import dao.BankAccountDao;
 //import service.OpenHighCreditAccountService;
@@ -55,8 +55,6 @@ public class Main {
                     System.out.println("(1~5) 숫자를 입력해주세요!");
                     break;
             }
-            
-            
         }	
         
     	
@@ -101,7 +99,7 @@ public class Main {
 //         }
 //
 //         System.out.println("계좌 생성 완료");
-//    	
+    	
     	 
     	
     	 
