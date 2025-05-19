@@ -77,7 +77,6 @@ public class ConsoleUI {
 
         System.out.println("[보통예금계좌 개설]");
 
-        // 이미 존재하는 계좌 ID 인지 검사
         System.out.print("계좌 ID : ");
         int accountNumber = 0;
         // 유효성 검사 (숫자가 아닌 입력)

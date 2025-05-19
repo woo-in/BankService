@@ -17,14 +17,14 @@ public class DepositService {
     // 입금 서비스 
     public void deposit(int accountNumber, double amount) throws IllegalArgumentException , RuntimeException  {
         if (amount < 0.0) {
-            throw new IllegalArgumentException("negative number error");
+            throw new IllegalArgumentException("Negative number error");
         }
 
         // -- 하나의 트랜잭션 
         
         // 계좌가 존재하지 않음 
         if(!bankAccountDao.isAccountExist(accountNumber)) {
-        	throw new RuntimeException("No such accountNumber");
+        	throw new RuntimeException("No such accountNumber error");
         }
         
         // 입금 
@@ -32,9 +32,5 @@ public class DepositService {
            
         // --------------
         
-        
-        
-        
-
     }
 }

@@ -5,11 +5,15 @@ package config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
+import aspect.TransactionLogAspect;
 import dao.BankAccountDao;
 import org.apache.tomcat.jdbc.pool.DataSource;
 
+
 @Configuration 
+@EnableAspectJAutoProxy
 @ComponentScan(basePackages= {"service" , "UI" , "account" , "dao"})
 public class AppCtx{ 
 	
@@ -32,10 +36,16 @@ public class AppCtx{
 		return ds; 
 	}
 	
-	// 
+	// 데이터 베이스 빈 등록 
 	@Bean 
 	public BankAccountDao bankAccountDao() {
 		return new BankAccountDao(dataSource()); 
+	}
+	
+	// 로그 데이터를 위한 AOP 빈 등록 
+	@Bean
+	public TransactionLogAspect transactionLogAspect() {
+		return new TransactionLogAspect(); 
 	}
 	
 	

@@ -1,0 +1,63 @@
+package aspect;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import dao.BankAccountDao;
+import exceptions.InsufficientFundsException;
+
+@Aspect 
+public class TransactionLogAspect {
+
+	// 데이터 베이스 접근 
+	@Autowired 
+	private BankAccountDao bankAccountDao ; 
+		
+	@Pointcut("execution(public void service.DepositService.deposit(int, double)) || execution(public void service.WithdrawService.withdraw(int, double))")
+	private void depositOrWithdrawPointcut() {}
+	
+	@Around("depositOrWithdrawPointcut()")
+	public Object measure(ProceedingJoinPoint joinPoint) throws Throwable{
+		
+		// 대상 계좌 
+		Object[] args = joinPoint.getArgs(); 
+		int accountId = (int) args[0]; 
+		
+		// 작업명 
+		String serviceName = joinPoint.getSignature().getName();
+		
+		try {	
+			joinPoint.proceed(); // 입출금 메서드 실행  
+			// 성공 로그기록 
+			bankAccountDao.recorSuccessLog(serviceName,accountId); 
+		}
+		catch(IllegalArgumentException e) {
+			// 입금액 , 출금액이 음수 (UI 에서 처리하기 때문에 호출되지는 않음)
+			bankAccountDao.recordFailLog(serviceName,accountId, "Negative number error");
+			throw new IllegalArgumentException("Negative number error");
+		}
+		catch(RuntimeException e) {
+			// 계좌 서칭 실패 
+			bankAccountDao.recordFailLog(serviceName,"No such accountNumber error");
+			throw new RuntimeException("No such accountNumber error"); 
+		}
+		catch(InsufficientFundsException e) {
+			// 예치금이 적음
+			bankAccountDao.recordFailLog(serviceName,accountId,"Insufficient Funds error");
+			throw new InsufficientFundsException("Insufficient Funds error");
+		}
+		
+		
+		
+		return null; 
+	}
+	
+	
+	
+	
+	
+	
+}
