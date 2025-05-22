@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 
 import account.*;
 import exceptions.*;
+import exceptions.InvalidAccountException.Role;
 import service.*;
+
+
 
 @Component
 public class ConsoleUI {
@@ -128,11 +131,17 @@ public class ConsoleUI {
             System.out.println("입금액 or 이자율은 0 보다 커야 합니다.");
             return ;
         }
-        catch(RuntimeException e) {
+        catch(DuplicateAccountException e) {
         	// 존재하는 계좌 
         	 System.out.println("이미 존재하는 계좌 ID 입니다.");
              return;
         }
+        catch(Exception e) {
+        	// 예상할 수 없는 Error 제외 예외 처리 
+        	System.out.println("파악 되지 않은 오류가 있습니다. 관리자에게 문의 하세요."); 
+        	return; 
+        }
+      
     }
 
     // 신용 신뢰 계좌 개설
@@ -210,15 +219,15 @@ public class ConsoleUI {
             System.out.println("입금액 or 이자율은 0 보다 커야 합니다.");
             return ;
         }
-        catch(InvalidCreditGradeException e){
-        	// 호출시 시스템 에러 의심 (중복체크에서 걸러짐) 
-            System.out.println("유효한 신용등급을 입력하세요(1~3)");
-            return ;
-        }
-        catch(RuntimeException e) {
+        catch(DuplicateAccountException e) {
         	// 존재하는 계좌 
         	 System.out.println("이미 존재하는 계좌 ID 입니다.");
              return;
+        }
+        catch(Exception e) {
+        	// 예상할 수 없는 Error 제외 예외 처리 
+        	System.out.println("파악 되지 않은 오류가 있습니다. 관리자에게 문의 하세요."); 
+        	return; 
         }
     }
 
@@ -259,9 +268,13 @@ public class ConsoleUI {
         	// 중복체크 , catch 시 시스템 에러 
             System.out.println("입금액은 0 보다 커야 합니다.");
             return ;
-        } catch(RuntimeException e) {
+        } catch(InvalidAccountException e) {
         	System.out.println("유효하지 않은 계좌 ID 입니다.");
             return;
+        } catch(Exception e) {
+        	// 예상할 수 없는 Error 제외 예외 처리 
+        	System.out.println("파악 되지 않은 오류가 있습니다. 관리자에게 문의 하세요."); 
+        	return; 
         }
 
         
@@ -311,9 +324,13 @@ public class ConsoleUI {
         } catch (InsufficientFundsException e) {
             System.out.println("잔액이 부족합니다.");
             return;
-        } catch(RuntimeException e) {
+        } catch(InvalidAccountException e) {
         	System.out.println("유효하지 않은 계좌 ID 입니다.");
             return;
+        } catch(Exception e) {
+        	// 예상할 수 없는 Error 제외 예외 처리 
+        	System.out.println("파악 되지 않은 오류가 있습니다. 관리자에게 문의 하세요."); 
+        	return; 
         }
         
         // 출금성공
@@ -340,13 +357,14 @@ public class ConsoleUI {
        try {
     	   found = accountManager.findAccount(accountNumber);
        }
-       catch(RuntimeException e) {
+       catch(InvalidAccountException e) {
             System.out.println("유효하지 않은 계좌 ID 입니다.");
             return; 
        }
-       catch(InvalidAccountTypeException e) {
-    	   System.out.println("유효하지 않은 계좌 타입 입니다.");
-           return;
+       catch(Exception e) {
+       	// 예상할 수 없는 Error 제외 예외 처리 
+       	System.out.println("파악 되지 않은 오류가 있습니다. 관리자에게 문의 하세요."); 
+       	return; 
        }
         
        System.out.print("계좌 ID : ");
@@ -369,6 +387,83 @@ public class ConsoleUI {
     	   	 System.out.println("신용 신뢰 계좌");
        }
       
+    }
+    
+    // 송금 
+    public void readTransferInfo() {
+    	 System.out.println("[송금]");
+
+         // sender 계좌 ID 입력 및 유효성 검사
+         System.out.print("송금 계좌 ID : ");
+         int senderNumber;
+         // 유효성 검사 (숫자가 아닌 입력)
+         try {
+             senderNumber = Integer.parseInt(scanner.nextLine());
+         }
+         catch (NumberFormatException e){
+             System.out.println("유효하지 않은 계좌 ID 형식 입니다.");
+             return ;
+         }
+
+         // receiver 계좌 ID 입력 및 유효성 검사 
+         System.out.print("수취 계좌 ID : ");
+         int receiverNumber;
+         // 유효성 검사 (숫자가 아닌 입력) 
+         try {
+        	 receiverNumber = Integer.parseInt(scanner.nextLine());
+         }
+         catch (NumberFormatException e){
+             System.out.println("유효하지 않은 계좌 ID 형식 입니다.");
+             return ;
+         }
+         
+         // 송금액 입력 및 유효성 검사
+         System.out.print("송금액 : ");
+         double balance = 0.0;
+         try {
+             balance = Double.parseDouble(scanner.nextLine());
+             if(balance < 0.0) {
+             	System.out.println("송금액은 0보다 커야 합니다.");
+             	return; 
+             }
+         }
+         catch (NumberFormatException e){
+             System.out.println("유효하지 않은 송금액 형식 입니다.");
+             return ;
+         }
+
+         // 송금 
+         try {
+             accountManager.transfer(senderNumber,receiverNumber,balance);
+         }
+         catch (IllegalArgumentException e) {
+         	// 중복체크 , catch 시 시스템 에러 
+             System.out.println("송금액은 0 보다 커야 합니다.");
+             return;
+         } catch (InsufficientFundsException e) {
+             System.out.println("잔액이 부족합니다.");
+             return;
+         } catch(InvalidAccountException e) {
+         	
+        	 if(e.getRole() == Role.SENDER) {
+        		 System.out.println("유효하지 않은 송금 계좌 ID 입니다.");
+        	 }
+        	 else if(e.getRole() == Role.RECEIVER) {
+        		 System.out.println("유효하지 않은 수취 계좌 ID 입니다.");
+        	 }
+        	 else {
+        		 System.out.println("유효하지 않은 계좌 ID 입니다.");
+        	 }
+             return;
+         } catch(Exception e) {
+         	// 예상할 수 없는 Error 제외 예외 처리 
+         	System.out.println("파악 되지 않은 오류가 있습니다. 관리자에게 문의 하세요."); 
+         	return; 
+         }
+         
+         // 송금성공 
+         System.out.println("송금완료");
+
     }
 
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import account.BankAccount;
 
-import exceptions.InvalidAccountTypeException;
+
 
 @Component
 public class BankAccountDao {
@@ -66,7 +66,7 @@ public class BankAccountDao {
 	
 	
 	// accountNumber 를 바탕으로 계좌정보 탐색후 pass (반드시 탐색후 호출) 
-	public BankAccount selectBankAccount(int accountNumber) throws InvalidAccountTypeException {
+	public BankAccount selectBankAccount(int accountNumber) {
 		
 		String checkSql = "SELECT * FROM BankAccount WHERE accountNumber = ?"; 
 		return jdbcTemplate.queryForObject(checkSql ,new BankAccountRowMapper()  , accountNumber);
@@ -90,5 +90,7 @@ public class BankAccountDao {
 		jdbcTemplate.update(insertSql , serviceName, "fail" , reason);
 	}
 		
+	
+	
 	
 }

@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import aspect.TransactionLogAspect;
 import dao.BankAccountDao;
@@ -40,6 +42,14 @@ public class AppCtx{
 	@Bean 
 	public BankAccountDao bankAccountDao() {
 		return new BankAccountDao(dataSource()); 
+	}
+	
+	// 트랜잭션 매니저 빈 등록 
+	@Bean
+	public PlatformTransactionManager transactionManager() {
+		DataSourceTransactionManager tm = new DataSourceTransactionManager(); 
+		tm.setDataSource(dataSource());
+		return tm ;
 	}
 	
 	// 로그 데이터를 위한 AOP 빈 등록 

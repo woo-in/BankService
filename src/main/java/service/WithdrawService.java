@@ -3,9 +3,12 @@ package service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import dao.BankAccountDao;
 import exceptions.InsufficientFundsException;
+import exceptions.InvalidAccountException;
+import exceptions.InvalidAccountException.Role;
 
 @Component
 public class WithdrawService {
@@ -16,16 +19,15 @@ public class WithdrawService {
 	
 
     // 출금 서비스 
-    public void withdraw(int accountNumber, double amount) throws IllegalArgumentException, InsufficientFundsException , RuntimeException {
+	@Transactional
+    public void withdraw(int accountNumber, double amount) throws IllegalArgumentException, InsufficientFundsException , InvalidAccountException {
         if (amount < 0.0) {
             throw new IllegalArgumentException("Negative number error");
         }
-                
-        // -- 하나의 트랜잭션 
-        
+                 
         // 계좌가 존재하지 않음 
         if(!bankAccountDao.isAccountExist(accountNumber)) {
-        	throw new RuntimeException("No such accountNumber error");
+        	throw new InvalidAccountException(Role.GENERAL);
         }
         
         // 예치금이 적음 
@@ -35,10 +37,6 @@ public class WithdrawService {
         
         // 출금 
         bankAccountDao.updateBalanceMinus(accountNumber, amount);
-           
-        // --------------
-        
-        
-        
+                   
     }
 }

@@ -13,6 +13,7 @@
 
 	<dependencies>
 	
+	<!-- Spring의 핵심 DI/IoC 기능을 제공하는 컨텍스트 모듈 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -20,6 +21,7 @@
 		</dependency>
 		
 		
+	<!-- Spring AOP에서 사용하는 AspectJ 런타임 라이브러리 -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
@@ -27,20 +29,22 @@
 		</dependency>
 		
 		
-		
+	<!-- Spring JDBC를 지원하는 모듈 (JdbcTemplate 포함) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>5.0.2.RELEASE</version>
 		</dependency>
 		
+		
+	<!-- Tomcat JDBC 커넥션 풀 라이브러리 -->	
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-jdbc</artifactId>
 			<version>8.5.27</version>
 		</dependency>
 		
-		
+	<!-- MariaDB용 JDBC 드라이버 -->
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import dao.BankAccountDao;
 import exceptions.InsufficientFundsException;
+import exceptions.InvalidAccountException;
+import exceptions.InvalidAccountException.Role;
 
 @Aspect 
 public class TransactionLogAspect {
@@ -35,14 +37,24 @@ public class TransactionLogAspect {
 			bankAccountDao.recorSuccessLog(serviceName,accountId); 
 		}
 		catch(IllegalArgumentException e) {
-			// 입금액 , 출금액이 음수 (UI 에서 처리하기 때문에 호출되지는 않음)
+			// 입금액 , 출금액 , 송금액이 음수 (UI 에서 처리하기 때문에 호출되지는 않음)
 			bankAccountDao.recordFailLog(serviceName,accountId, "Negative number error");
 			throw new IllegalArgumentException("Negative number error");
 		}
-		catch(RuntimeException e) {
+		catch(InvalidAccountException e) {
 			// 계좌 서칭 실패 
-			bankAccountDao.recordFailLog(serviceName,"No such accountNumber error");
-			throw new RuntimeException("No such accountNumber error"); 
+			 if(e.getRole() == Role.SENDER) {
+				 bankAccountDao.recordFailLog(serviceName,"Invalid sender id");
+				 throw new InvalidAccountException(Role.SENDER); 
+        	 }
+        	 else if(e.getRole() == Role.RECEIVER) {
+        		 bankAccountDao.recordFailLog(serviceName,"Invalid receiver id");
+        		 throw new InvalidAccountException(Role.RECEIVER); 
+        	 }
+        	 else {
+        		bankAccountDao.recordFailLog(serviceName,"Invalid id");
+        		throw new InvalidAccountException(Role.GENERAL); 
+        	 }
 		}
 		catch(InsufficientFundsException e) {
 			// 예치금이 적음

@@ -1,9 +1,12 @@
 package service;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import dao.BankAccountDao;
+import exceptions.InvalidAccountException;
+import exceptions.InvalidAccountException.Role;
 
 @Component
 public class DepositService {
@@ -15,22 +18,17 @@ public class DepositService {
 	
 		
     // 입금 서비스 
-    public void deposit(int accountNumber, double amount) throws IllegalArgumentException , RuntimeException  {
+	@Transactional
+    public void deposit(int accountNumber, double amount) throws IllegalArgumentException , InvalidAccountException  {
         if (amount < 0.0) {
             throw new IllegalArgumentException("Negative number error");
         }
 
-        // -- 하나의 트랜잭션 
-        
         // 계좌가 존재하지 않음 
         if(!bankAccountDao.isAccountExist(accountNumber)) {
-        	throw new RuntimeException("No such accountNumber error");
+        	throw new InvalidAccountException(Role.GENERAL);
         }
-        
         // 입금 
         bankAccountDao.updateBalancePlus(accountNumber, amount);
-           
-        // --------------
-        
     }
 }
