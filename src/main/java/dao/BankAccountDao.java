@@ -74,7 +74,7 @@ public class BankAccountDao {
 	}
 	
 	// 성공 로그 기록 
-	public void recorSuccessLog(String serviceName,int accountId) {
+	public void recordSuccessLog(String serviceName,int accountId) {
 		String insertSql = "INSERT INTO TransactionLog(accountId , transactionType , transactionStatus) VALUES(?,?,?)"; 
 		jdbcTemplate.update(insertSql , accountId , serviceName , "success");
 	}
@@ -88,6 +88,12 @@ public class BankAccountDao {
 	public void recordFailLog(String serviceName , String reason) {
 		String insertSql = "INSERT INTO TransactionLog(transactionType , transactionStatus , failureReason) VALUES(?,?,?)";
 		jdbcTemplate.update(insertSql , serviceName, "fail" , reason);
+	}
+	
+	// 거래 로그 기록 
+	public void recordTransferLog(int senderId , int receiverId , double amount) {
+		String insertSql = "INSERT INTO TransferLog(senderId , receiverId , amount) VALUES(?,?,?)";
+		jdbcTemplate.update(insertSql , senderId, receiverId , amount);
 	}
 		
 	

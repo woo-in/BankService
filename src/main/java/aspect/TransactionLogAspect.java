@@ -26,7 +26,11 @@ public class TransactionLogAspect {
 	@Around("depositOrWithdrawPointcut()")
 	public Object measure(ProceedingJoinPoint joinPoint) throws Throwable{
 		
-		// 대상 계좌 
+		// 입금 -> (대상계좌 , 금액)
+		// 출금 -> (대상계좌 , 금액)
+		// 송금 -> (송금계좌 , 수취계좌 , 금액) 
+		
+		
 		Object[] args = joinPoint.getArgs(); 
 		int accountId = (int) args[0]; 
 		
@@ -36,7 +40,11 @@ public class TransactionLogAspect {
 		try {	
 			joinPoint.proceed(); // 입출금 메서드 실행  
 			// 성공 로그기록 
-			bankAccountDao.recorSuccessLog(serviceName,accountId); 
+			bankAccountDao.recordSuccessLog(serviceName,accountId); 
+			// 만약 성공 로그가 송금이라면 거래로그 테이블에 기록 
+			if(serviceName.equals("transfer")) {
+				bankAccountDao.recordTransferLog((int)args[0],(int)args[1],(double)args[2]);
+			}
 		}
 		catch(IllegalArgumentException e) {
 			// 입금액 , 출금액 , 송금액이 음수 (UI 에서 처리하기 때문에 호출되지는 않음)
