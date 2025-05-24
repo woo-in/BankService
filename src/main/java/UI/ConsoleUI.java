@@ -32,8 +32,9 @@ public class ConsoleUI {
         System.out.println("1. 계좌 개설");
         System.out.println("2. 입금");
         System.out.println("3. 출금");
-        System.out.println("4. 계좌 조회");
-        System.out.println("5. 프로그램 종료");
+        System.out.println("4. 송금");
+        System.out.println("5. 계좌 조회");
+        System.out.println("6. 프로그램 종료");
         System.out.print("선택 : ");
 
         // 유효성 검사 (숫자가 아닌 입력)
@@ -416,6 +417,14 @@ public class ConsoleUI {
              System.out.println("유효하지 않은 계좌 ID 형식 입니다.");
              return ;
          }
+         
+         // sender , receiver 같은지 체크 
+         if(senderNumber == receiverNumber) {
+        	 System.out.println("송금 계좌와 수취 계좌가 동일 합니다.");
+        	 System.out.println("다시 확인하여 주십시오.");
+        	 return ; 
+         }
+         
          
          // 송금액 입력 및 유효성 검사
          System.out.print("송금액 : ");

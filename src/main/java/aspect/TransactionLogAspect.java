@@ -18,7 +18,9 @@ public class TransactionLogAspect {
 	@Autowired 
 	private BankAccountDao bankAccountDao ; 
 		
-	@Pointcut("execution(public void service.DepositService.deposit(int, double)) || execution(public void service.WithdrawService.withdraw(int, double))")
+	@Pointcut("execution(public void service.DepositService.deposit(int, double)) "
+			+ "|| execution(public void service.WithdrawService.withdraw(int, double))"
+			+ " || execution(public void service.TransferService.transfer(int,int,double))")	
 	private void depositOrWithdrawPointcut() {}
 	
 	@Around("depositOrWithdrawPointcut()")

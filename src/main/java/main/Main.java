@@ -47,12 +47,15 @@ public class Main {
                     consoleUI.readWithdrawInfo();
                     break;
                 case 4:
-                    consoleUI.showAccountInfo();
+                    consoleUI.readTransferInfo();
                     break;
                 case 5:
-                    return;
+                	consoleUI.showAccountInfo();
+                    break; 
+                case 6: 
+                	return; 
                 default:
-                    System.out.println("(1~5) 숫자를 입력해주세요!");
+                    System.out.println("(1~6) 숫자를 입력해주세요!");
                     break;
             }
         }	
