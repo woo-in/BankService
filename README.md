@@ -1,1 +1,1 @@
-Main -> ConsoleUI -> BankAccountManager -> Service -> BankAccountDao(DB access) 
+콘솔 UI 기반 은행 앱
